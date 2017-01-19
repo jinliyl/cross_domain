@@ -61,8 +61,8 @@ def index_content():
 
 
 
-def train_test(t):
-    if t == 0:
+def train_test(cross, part, model, name):
+    if cross:
         cross_train = train_nn(
             #emotion_list = ["happy", "touched", "sympathetic", "angry", "amused", "sad", "surprised", "anxious"],
             emotion_list = ["happy", "sympathetic", "angry", "amused", "sad", "surprised"],
@@ -70,16 +70,18 @@ def train_test(t):
             source_dic_path = "pre_data/Sina_dic",
             target_path = "pre_data/QQ_index",
             source_path = "pre_data/Sina_index",
-            transfer_path = "pre_data/Sina_QQ_trans",
-            part = 16,
-            model = "bi_lstm",
+            transfer_path = "pre_data/Sina--QQ_trans",
+            part = part,
+            model = model,
             batch_size = 32,
             num_filters = 128,
             sequence_length = 150,
             embedding_dim = 128,
             op_step = 5e-4,
             word_vec_target = "pre_data/QQ_vectors", 
-            word_vec_source = "pre_data/Sina_vectors")
+            word_vec_source = "pre_data/Sina_vectors",
+            tf_df_target = "pre_data/QQ_tf_df",
+            tf_df_source = "pre_data/Sina_tf_df",)
         return cross_train.run()
     else:
         single_train = train_nn(
@@ -87,8 +89,8 @@ def train_test(t):
             #emotion_list = ["happy", "touched", "sympathetic", "angry", "amused", "sad", "surprised", "anxious"],
             target_dic_path = "pre_data/QQ_dic",
             target_path = "pre_data/QQ_index",
-            part = 64,
-            model = "cnn",
+            part = part,
+            model = model,
             cross_lingual = False,
             filter_sizes = [1, 2, 3],
             embedding_dim = 128,
@@ -100,8 +102,20 @@ def train_test(t):
         return single_train.run()
 
 if __name__ == "__main__":
-    load_and_save()
-    translate()
-    statistics()
-    index_content()
-    #train_test(1)
+    #load_and_save()
+    #translate()
+    #statistics()
+    #index_content()
+    res = []
+    para = ["True", 64, "cnn", "QQ"]
+    for i in range(1):
+        accu = train_test(para[0], para[1], para[2], para[3])
+        res.append(accu)
+        print("")
+    time_str = datetime.now().isoformat()
+    with open("./result/" + time_str, "w") as f:
+        print(res, file=f)
+        print(para)
+
+
+

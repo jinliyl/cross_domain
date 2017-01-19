@@ -7,6 +7,7 @@ from neuralnet.single_cnn import single_cnn
 from neuralnet.single_bi_lstm import single_bi_lstm
 from neuralnet.cross_bi_lstm import cross_bi_lstm
 from neuralnet.single_cnn_lstm import single_cnn_lstm
+from neuralnet.train_transw import train_transw
 
 class train_nn():
 
@@ -35,6 +36,8 @@ class train_nn():
                 op_step = 1e-3, 
                 word_vec_target = "",
                 word_vec_source = "",
+                tf_df_target = "", 
+                tf_df_source = "",
                 max_iter = 600):
         
         self.emotion_list = emotion_list
@@ -68,11 +71,27 @@ class train_nn():
         self.op_step = op_step
         self.word_vec_target = word_vec_target
         self.word_vec_source = word_vec_source
+        self.tf_df_target = tf_df_target
+        self.tf_df_source = tf_df_source
         self.max_iter = max_iter
 
 
     def run(self):
-        
+        tt = train_transw(
+            target_dic_path = self.target_dic_path,
+            source_dic_path = self.source_dic_path,
+            transfer_path = self.transfer_path,
+            word_vec_target = self.word_vec_target,
+            word_vec_source = self.word_vec_source,
+            tf_df_target = self.tf_df_target,
+            tf_df_source = self.tf_df_source,
+            weight_kind = "1",
+            embedding_size = 128,
+            trainable = True, 
+            max_iter = 2000)
+        tt()
+        exit()
+
         print("emotions: " + str(self.emotion_list))
         if self.cross_lingual:
             self.load_cross_data()
@@ -108,14 +127,17 @@ class train_nn():
 
     def load_transfer(self, path, add_len):
         res = {}
+        ## 0 source target 
+
         with open(path) as f:
             for line in f:
                 line = line.strip()
                 index_en, index_cn, _, _ = line.split("\t")
-                if self.cn2en == 1:
-                    res[int(index_en) + 1] = int(index_cn) + 1 + add_len
-                else:
-                    res[int(index_cn) + 1] = int(index_en) + 1 + add_len
+                res[int(index_en) + 1] = int(index_cn) + 1 + add_len
+                #if self.cn2en == 1:
+                #    res[int(index_en) + 1] = int(index_cn) + 1 + add_len
+                #else:
+                #    res[int(index_cn) + 1] = int(index_en) + 1 + add_len
         return res
 
     def shuffle_data(self, label, feature, part = 1):
@@ -233,8 +255,6 @@ class train_nn():
         self.load_word_vec(self.target_vec_dic, self.word_vec_source, 1)
         self.load_word_vec(self.target_vec_dic, self.word_vec_target, 1 + source_dic_len)
         self.target_vec_dic = [x for _, x in list(sorted(self.target_vec_dic.items(), key = lambda x:x[0]))]
-        #print(self.target_vec_dic[1])
-        #print(len(self.target_vec_dic))
 
         self.transform_dic = self.load_transfer(self.transfer_path, source_dic_len)
         
