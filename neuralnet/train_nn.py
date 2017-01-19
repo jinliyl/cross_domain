@@ -34,7 +34,8 @@ class train_nn():
                 random_train = False,
                 op_step = 1e-3, 
                 word_vec_target = "",
-                word_vec_source = ""):
+                word_vec_source = "",
+                max_iter = 600):
         
         self.emotion_list = emotion_list
         self.target_dic_path = target_dic_path
@@ -45,14 +46,8 @@ class train_nn():
         self.part = part
 
         self.model = model
-        #if self.model in ["cnn"]:
-        #    self.dynamic = False
-        #elif self.model in ["lstm", "bi_lstm"]:
-        #    self.dynamic = True
-        #else:
-        #    self.dynamic = False
-
-        self.cn2en = cn2en
+ 
+        self.cn2en = cn2en # 0 
         self.sequence_length = sequence_length
         self.cross_lingual = cross_lingual
 
@@ -73,7 +68,7 @@ class train_nn():
         self.op_step = op_step
         self.word_vec_target = word_vec_target
         self.word_vec_source = word_vec_source
-
+        self.max_iter = max_iter
 
 
     def run(self):
@@ -81,10 +76,10 @@ class train_nn():
         print("emotions: " + str(self.emotion_list))
         if self.cross_lingual:
             self.load_cross_data()
-            self.cross_training()
+            return self.cross_training()
         else:
             self.load_single_data()
-            self.single_training()
+            return self.single_training()
 
     def load_data(self, path, add_len = 0):
         data_label = []
@@ -101,25 +96,6 @@ class train_nn():
                 data_label.append(labelfeature)
                 ll = line.split(" ")
                 data_feature.append([(int(x) + add_len + 1) for x in ll])
-                '''
-                feature = []
-                if len(ll) < self.sequence_length:
-                    feature += [(int(x) + add_len + 1) for x in ll]
-                else:
-                    feature += [(int(x) + add_len + 1) for x in ll[:self.sequence_length]]
-               
-                if self.dynamic:
-                    if len(ll) < self.sequence_length:
-                        feature += [(int(x) + add_len + 1) for x in ll]
-                    else:
-                        feature += [(int(x) + add_len + 1) for x in ll[:self.sequence_length]]
-                else:
-                    if len(ll) < self.sequence_length: 
-                        feature += [(int(x) + add_len + 1) for x in ll] + [0 for x in range(self.sequence_length - len(ll))]
-                    else:
-                        feature += [(int(x) + add_len + 1) for x in ll[:self.sequence_length]]
-                data_feature.append(feature)
-                '''
         return data_label, data_feature
 
 
@@ -292,7 +268,7 @@ class train_nn():
 
     def cross_training(self):
         with tf.Graph().as_default():
-            session_conf = tf.ConfigProto(allow_soft_placement = True, log_device_placement = False, intra_op_parallelism_threads = 24)
+            session_conf = tf.ConfigProto(allow_soft_placement = True, log_device_placement = False)#, intra_op_parallelism_threads = 24)
             sess = tf.Session(config=session_conf)
             with sess.as_default():
                 if self.model == "cnn":
@@ -460,6 +436,7 @@ class train_nn():
                         time_str = datetime.now().isoformat()
                         print("eval  {}: step {}, loss {:g}, kl {:g}, acc {:g}, max_accu {:g}".format(time_str, step, loss, kl, accuracy, max_accu))
                         #print("eval  {}: loss {:g}".format(time_str, loss))
+        return max_accu
 
     def load_single_data(self):
         print("Loading data...")
@@ -581,4 +558,4 @@ class train_nn():
                             max_accu = accuracy
                         time_str = datetime.now().isoformat()
                         print("eval  {}: step {}, loss {:g}, kl {:g}, acc {:g}, max_accu {:g}".format(time_str, step, loss, kl, accuracy, max_accu))
-
+        return max_accu
