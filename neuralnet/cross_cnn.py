@@ -3,7 +3,21 @@ import numpy as np
 
 class cross_cnn():
 
-   def __init__(self, target_vec_dic, sequence_length, num_classes, vocab_size, embedding_size, filter_sizes, num_filters, l2_reg_lambda=0.0, label_smoothing = 0.00):
+   def __init__(self, 
+        target_vec_dic, 
+        sequence_length, 
+        num_classes, 
+        vocab_size, 
+        embedding_size, 
+        filter_sizes, 
+        num_filters, 
+        trans_w,
+        trans_b,
+        sour_dic,
+        tar_dic,
+        wei_dic,
+        l2_reg_lambda=0.0, 
+        label_smoothing = 0.00):
 
         # Placeholders for input, output and dropout
         self.seq_len = tf.placeholder(tf.int32, [None], name = "seq_len")
@@ -27,21 +41,23 @@ class cross_cnn():
         # Embedding layer
         with tf.device('/cpu:0'), tf.name_scope("embedding"):
             self.embedded_W = tf.Variable(
-            #    tf.random_uniform([vocab_size, embedding_size], dtype=tf.float32, minval=-1.0, maxval=1.0),
-            #    name="W")
             #self.embedded_W = tf.constant(
                 target_vec_dic, 
                 name="W")
             self.embedded_chars = tf.nn.embedding_lookup(self.embedded_W, self.input_x)
-        
+            
+            #self.weight_W = tf.Variable(
+            self.weight_W = tf.constant(
+                wei_dic, 
+                name="W2")      
 
         # Transfer layer
         with tf.device('/cpu:0'), tf.name_scope("transfer"):
             ident_w = tf.constant(np.identity(embedding_size, dtype=np.float32), name = "ident_w")
             ident_b = tf.constant(np.zeros(embedding_size, dtype=np.float32), name = "ident_b")
             
-            self.trans_w = tf.Variable(tf.random_uniform([embedding_size, embedding_size], dtype=tf.float32, minval=-1.0, maxval=1.0), name = "trans_w", dtype=np.float32)
-            self.trans_b = tf.Variable(tf.random_uniform([embedding_size], dtype=tf.float32, minval=-1.0, maxval=1.0), name = "trans_b", dtype=np.float32)
+            self.trans_w = tf.Variable(trans_w, name = "trans_w", dtype=np.float32)
+            self.trans_b = tf.Variable(trans_b, name = "trans_b", dtype=np.float32)
             
             self.final_w = tf.add(tf.mul(ident_w, self.input_f_cn), tf.mul(self.trans_w, self.input_f_en), name = "final_w")
             self.final_b = tf.add(tf.mul(ident_b, self.input_f_cn), tf.mul(self.trans_b, self.input_f_en), name = "final_b")
@@ -55,10 +71,15 @@ class cross_cnn():
                
         # Transfer loss
         with tf.device('/cpu:0'), tf.name_scope("transfer_loss"):
-            embedded_en = tf.nn.embedding_lookup(self.embedded_W, self.input_trans_en)
-            embedded_cn = tf.nn.embedding_lookup(self.embedded_W, self.input_trans_cn)
-            self.transfer_error = tf.add(tf.add(tf.matmul(embedded_en, self.trans_w), self.trans_b), tf.mul(embedded_cn, -1))
-            self.transfer_loss = tf.nn.l2_loss(self.transfer_error)
+            trans_en_weight = tf.nn.embedding_lookup(self.weight_W, self.input_trans_en)
+            trans_cn_weight = tf.nn.embedding_lookup(self.weight_W, self.input_trans_cn)
+            trans_en_embedded = tf.nn.embedding_lookup(self.embedded_W, self.input_trans_en)
+            trans_cn_embedded = tf.nn.embedding_lookup(self.embedded_W, self.input_trans_cn)
+
+            loss_none_weight = tf.nn.xw_plus_b(trans_en_embedded, self.trans_w, self.trans_b) - trans_cn_embedded
+            l2_loss_none_weight = tf.reduce_mean(tf.mul(loss_none_weight, loss_none_weight), 1)
+            final_weight = tf.div(trans_cn_weight, trans_en_weight)
+            self.transfer_loss = tf.reduce_mean(tf.mul(l2_loss_none_weight, final_weight))
 
         # Create a convolution + maxpool layer for each filter size
         pooled_outputs = []
@@ -113,10 +134,7 @@ class cross_cnn():
                         tf.cast(self.input_y, tf.float32), label_smoothing = self.label_smoothing)
             self.kl = tf.reduce_mean(losses - selflosses)
             self.all_weight = self.input_f_en * self.en_weight + self.input_f_cn * self.cn_weight
-            ##self.loss = tf.mul((tf.reduce_mean(losses) + l2_reg_lambda * l2_loss), self.all_weight) + tf.mul(self.transfer_loss, self.trans_weight)
             self.loss = tf.reduce_mean(losses) * self.all_weight + l2_reg_lambda * l2_loss + self.transfer_loss * self.trans_weight * self.input_f_en
-            #self.loss = self.transfer_loss* self.trans_weight * self.input_f_en
-            #self.kl = self.loss
 
         # Accuracy
         with tf.name_scope("accuracy"):

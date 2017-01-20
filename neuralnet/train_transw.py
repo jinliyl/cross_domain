@@ -38,9 +38,6 @@ class train_transw(object):
         self.trans_b = []
 
     def __call__(self):
-        if not self.trainable:
-            self.load__wb()
-            return self.trans_w, self.trans_b
 
         print("start training w_b...")
         target_dic_len = self.load_dic_len(self.target_dic_path)
@@ -63,6 +60,10 @@ class train_transw(object):
         self.load_word_tf_df(self.wei_dic, self.tf_df_target, 1 + source_dic_len)
         self.wei_dic = [x for _, x in list(sorted(self.wei_dic.items(), key = lambda x:x[0]))]
         print(len(self.wei_dic))
+        
+        if not self.trainable:
+            self.load__wb()
+            return
         
 
         with tf.Graph().as_default():
