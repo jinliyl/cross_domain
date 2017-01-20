@@ -55,12 +55,22 @@ class train_transw(object):
         print(len(self.vec_dic))
 
         self.wei_dic = {}
-        self.wei_dic[0] = 0.0
+        self.wei_dic[0] = 1.0
         self.load_word_tf_df(self.wei_dic, self.tf_df_source, 1)
         self.load_word_tf_df(self.wei_dic, self.tf_df_target, 1 + source_dic_len)
         self.wei_dic = [x for _, x in list(sorted(self.wei_dic.items(), key = lambda x:x[0]))]
         print(len(self.wei_dic))
-        
+      
+        print("start checking") 
+        lll = len(self.vec_dic)
+        for x in self.sour_dic:
+            if x >= lll:
+                print("error in sour: " + str(x)) 
+        for x in self.tar_dic:
+            if x >= lll:
+                print("error in tar: " + str(x))
+
+
         if not self.trainable:
             self.load__wb()
             return
@@ -161,7 +171,7 @@ class train_transw(object):
                 elif self.weight_kind == "df":
                     wei = df
                 elif self.weight_kind == "tfidf":
-                    wei = tf/idf
+                    wei = tf/df
                 else:
                     wei = 1.0
                 dic[ind + add_len] = wei

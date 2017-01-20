@@ -5,6 +5,7 @@ from preprocess.statistic import label_statistic
 from preprocess.make_index import make_index
 from preprocess.make_index import transform
 from neuralnet.train_nn import train_nn
+from datetime import datetime
 
 def load_and_save():
     qq_data = load_data("QQ", "pre_data", "cn", "data/QQ/NewsQQ.txt", "data/QQ/LabelQQ.txt")
@@ -107,15 +108,16 @@ if __name__ == "__main__":
     #statistics()
     #index_content()
     res = []
-    para = ["True", 64, "cnn", "QQ"]
-    for i in range(1):
+    para = ["False", 4, "cnn", "QQ"]
+    for i in range(10):
+        print(str(t) + " times training...")
         accu = train_test(para[0], para[1], para[2], para[3])
         res.append(accu)
         print("")
     time_str = datetime.now().isoformat()
     with open("./result/" + time_str, "w") as f:
         print(res, file=f)
-        print(para)
+        print(para, file=f)
 
 
 

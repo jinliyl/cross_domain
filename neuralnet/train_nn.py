@@ -246,6 +246,11 @@ class train_nn():
             sess = tf.Session(config=session_conf)
             with sess.as_default():
                 if self.model == "cnn":
+                    #print(len(self.trans_w))
+                    #print(self.trans_w[0])
+                    #print(len(self.tar_dic))
+                    #print(self.tar_dic[0])
+                    #print(self.wei_dic[:20])
                     cross_model = cross_cnn(
                         target_vec_dic = self.target_vec_dic,
                         sequence_length = self.sequence_length,
@@ -307,8 +312,8 @@ class train_nn():
                         cross_model.input_y: y_batch,
                         cross_model.dropout_keep_prob: self.dropout_keep_prob,
                         cross_model.cn_weight: 1,
-                        cross_model.en_weight: 1,
-                        cross_model.trans_weight: 1,
+                        cross_model.en_weight: 0.5,
+                        cross_model.trans_weight: 1e-2,
                         cross_model.learning_rate: rate
                     }
                     _, step, loss, kl, accuracy = sess.run(

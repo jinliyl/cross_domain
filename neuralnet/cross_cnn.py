@@ -40,8 +40,8 @@ class cross_cnn():
 
         # Embedding layer
         with tf.device('/cpu:0'), tf.name_scope("embedding"):
-            self.embedded_W = tf.Variable(
-            #self.embedded_W = tf.constant(
+            #self.embedded_W = tf.Variable(
+            self.embedded_W = tf.constant(
                 target_vec_dic, 
                 name="W")
             self.embedded_chars = tf.nn.embedding_lookup(self.embedded_W, self.input_x)
@@ -77,9 +77,9 @@ class cross_cnn():
             trans_cn_embedded = tf.nn.embedding_lookup(self.embedded_W, self.input_trans_cn)
 
             loss_none_weight = tf.nn.xw_plus_b(trans_en_embedded, self.trans_w, self.trans_b) - trans_cn_embedded
-            l2_loss_none_weight = tf.reduce_mean(tf.mul(loss_none_weight, loss_none_weight), 1)
-            final_weight = tf.div(trans_cn_weight, trans_en_weight)
-            self.transfer_loss = tf.reduce_mean(tf.mul(l2_loss_none_weight, final_weight))
+            self.l2_loss_none_weight = tf.reduce_mean(tf.mul(loss_none_weight, loss_none_weight), 1)
+            self.final_weight = tf.div(trans_cn_weight, trans_en_weight)
+            self.transfer_loss = tf.reduce_mean(tf.mul(self.l2_loss_none_weight, self.final_weight))
 
         # Create a convolution + maxpool layer for each filter size
         pooled_outputs = []
@@ -134,7 +134,7 @@ class cross_cnn():
                         tf.cast(self.input_y, tf.float32), label_smoothing = self.label_smoothing)
             self.kl = tf.reduce_mean(losses - selflosses)
             self.all_weight = self.input_f_en * self.en_weight + self.input_f_cn * self.cn_weight
-            self.loss = tf.reduce_mean(losses) * self.all_weight + l2_reg_lambda * l2_loss + self.transfer_loss * self.trans_weight * self.input_f_en
+            self.loss = tf.reduce_mean(losses) * self.all_weight + l2_reg_lambda * l2_loss + self.transfer_loss * self.trans_weight
 
         # Accuracy
         with tf.name_scope("accuracy"):
