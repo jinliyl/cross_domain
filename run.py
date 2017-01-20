@@ -108,9 +108,9 @@ if __name__ == "__main__":
     #statistics()
     #index_content()
     res = []
-    para = ["False", 4, "cnn", "QQ"]
+    para = ["False", 4, "bi_lstm", "QQ"]
     for i in range(10):
-        print(str(t) + " times training...")
+        print(str(i) + " times training...")
         accu = train_test(para[0], para[1], para[2], para[3])
         res.append(accu)
         print("")

@@ -28,7 +28,7 @@ class train_nn():
                 dropout_keep_prob = 0.5,
                 l2_reg_lambda = 0.00, 
                 batch_size = 64, 
-                num_epochs = 500, 
+                num_epochs = 300, 
                 evaluate_every = 10, 
                 checkpoint_every = 100,
                 random_train = False,
@@ -37,7 +37,7 @@ class train_nn():
                 word_vec_source = "",
                 tf_df_target = "", 
                 tf_df_source = "",
-                max_iter = 600):
+                max_iter = 200):
         
         self.emotion_list = emotion_list
         self.target_dic_path = target_dic_path
