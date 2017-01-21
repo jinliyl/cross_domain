@@ -108,8 +108,8 @@ if __name__ == "__main__":
     #statistics()
     #index_content()
     res = []
-    para = ["True", 4, "cnn", "QQ"]
-    for i in range(10):
+    para = ["False", 64, "cnn", "QQ"]
+    for i in range(20):
         print(str(i) + " times training...")
         accu = train_test(para[0], para[1], para[2], para[3])
         res.append(accu)
@@ -118,6 +118,18 @@ if __name__ == "__main__":
     with open("./result/" + time_str, "w") as f:
         print(res, file=f)
         print(para, file=f)
+    
+    res = []
+    para = ["False", 64, "bi_lstm", "QQ"]
+    for i in range(10):
+        print(str(i) + " times training...")
+        accu = train_test(para[0], para[1], para[2], para[3])
+        res.append(accu)
+        print("")
+    time_str = datetime.now().isoformat()
+    with open("./result/" + time_str, "w") as f:
+        print(res, file=f)
+        print(para, file=f) 
 
 
 
