@@ -78,7 +78,7 @@ def train_test(cross, part, model, name):
             num_filters = 128,
             sequence_length = 150,
             embedding_dim = 128,
-            op_step = 5e-4,
+            op_step = 1e-4,
             word_vec_target = "pre_data/QQ_vectors", 
             word_vec_source = "pre_data/Sina_vectors",
             tf_df_target = "pre_data/QQ_tf_df",
@@ -98,16 +98,17 @@ def train_test(cross, part, model, name):
             batch_size = 32,
             num_filters = 128,
             sequence_length = 150,
-            op_step = 1e-3, 
+            op_step = 1e-4, 
             word_vec_target = "pre_data/QQ_vectors")
         return single_train.run()
 
 if __name__ == "__main__":
-    #load_and_save()
-    #translate()
-    #statistics()
-    #index_content()
-    
+    '''
+    load_and_save()
+    translate()
+    statistics()
+    index_content()
+    '''
     res = []
     para = ["True", 64, "bi_lstm", "QQ"]
     time_str = datetime.now().isoformat()
@@ -122,5 +123,5 @@ if __name__ == "__main__":
     print(res, file=f)
     print(para, file=f) 
     f.close()
-
+    #'''
 

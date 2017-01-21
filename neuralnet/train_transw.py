@@ -14,7 +14,7 @@ class train_transw(object):
             word_vec_source, 
             tf_df_target,
             tf_df_source,
-            weight_kind = "1",
+            weight_kind = "df",
             embedding_size = 128,
             trainable = True, 
             max_iter = 50000):
@@ -45,7 +45,6 @@ class train_transw(object):
         source_dic_len = self.load_dic_len(self.source_dic_path)
         print("source dic " + self.source_dic_path + " len: " + str(source_dic_len))
         
-        self.load_transfer(self.transfer_path, source_dic_len)
         
         self.vec_dic = {}
         self.vec_dic[0] = [0 for x in range(self.embedding_size)]
@@ -54,13 +53,26 @@ class train_transw(object):
         self.vec_dic = [x for _, x in list(sorted(self.vec_dic.items(), key = lambda x:x[0]))]
         print(len(self.vec_dic))
 
+        # weight
         self.wei_dic = {}
         self.wei_dic[0] = 1.0
+
+        # tf
+        self.tf_dic = {}
+        self.tf_dic[0] = 0
+
+        # df
+        self.df_dic = {}
+        self.df_dic[0] = 0
+
+
         self.load_word_tf_df(self.wei_dic, self.tf_df_source, 1)
         self.load_word_tf_df(self.wei_dic, self.tf_df_target, 1 + source_dic_len)
         self.wei_dic = [x for _, x in list(sorted(self.wei_dic.items(), key = lambda x:x[0]))]
         print(len(self.wei_dic))
-      
+     
+        self.load_transfer(self.transfer_path, source_dic_len)
+        print("all trans map " + str(len(self.sour_dic)))
         print("start checking") 
         lll = len(self.vec_dic)
         for x in self.sour_dic:
@@ -141,8 +153,11 @@ class train_transw(object):
             for line in f:
                 line = line.strip()
                 ind_sour, ind_tar, _, _ = line.split("\t")
-                self.sour_dic.append(int(ind_sour) + 1)
-                self.tar_dic.append(int(ind_tar) + 1 + add_len)
+                ind_sour = int(ind_sour) + 1
+                ind_tar = int(ind_tar) + 1 + add_len
+                if ind_sour > 10 and ind_tar > 10:
+                    self.sour_dic.append(ind_sour)
+                    self.tar_dic.append(ind_tar)
 
 
     def load_word_vec(self, dic, vec_path, add_len):
@@ -175,7 +190,8 @@ class train_transw(object):
                 else:
                     wei = 1.0
                 dic[ind + add_len] = wei
-
+                self.tf_dic[ind + add_len] = tf
+                self.df_dic[ind + add_len] = df
 
 
 

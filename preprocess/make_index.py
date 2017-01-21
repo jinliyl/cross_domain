@@ -59,8 +59,8 @@ class make_index:
             keys_list = sorted(self.word_dic_tf.keys(), key=lambda x:int(x), reverse=True)
             max_tf = max([int(x) for x in self.word_dic_tf.values()])
             for k in keys_list:
-                tf = str(self.word_dic_tf[k] * 1.0 / max_tf)
-                df = str(self.word_dic_df[k] * 1.0 / self.doc_count)
+                tf = str(self.word_dic_tf[k])# * 1.0 / max_tf)
+                df = str(self.word_dic_df[k])# * 1.0 / self.doc_count)
                 print("\t".join([k, tf, df]), file = fw)
 
     def process_index(self):
