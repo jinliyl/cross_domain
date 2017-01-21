@@ -37,7 +37,7 @@ class train_nn():
                 word_vec_source = "",
                 tf_df_target = "", 
                 tf_df_source = "",
-                max_iter = 600):
+                max_iter = 300):
         
         self.emotion_list = emotion_list
         self.target_dic_path = target_dic_path
@@ -86,7 +86,7 @@ class train_nn():
                 weight_kind = "1",
                 embedding_size = 128,
                 trainable = False,
-                max_iter = 2000)
+                max_iter = 6000)
             tt()
             self.trans_w = tt.trans_w
             self.trans_b = tt.trans_b
@@ -251,6 +251,7 @@ class train_nn():
                     #print(len(self.tar_dic))
                     #print(self.tar_dic[0])
                     #print(self.wei_dic[:20])
+                    print("model cross cnn")
                     cross_model = cross_cnn(
                         target_vec_dic = self.target_vec_dic,
                         sequence_length = self.sequence_length,
@@ -266,6 +267,7 @@ class train_nn():
                         tar_dic = self.tar_dic,
                         wei_dic = self.wei_dic)
                 elif self.model == "bi_lstm":
+                    print("model cross bi_lstm")
                     cross_model = cross_bi_lstm(
                         target_vec_dic = self.target_vec_dic,
                         sequence_length = self.sequence_length,
@@ -275,7 +277,13 @@ class train_nn():
                         filter_sizes = self.filter_sizes,
                         num_filters = self.num_filters,
                         dropout_keep_prob = self.dropout_keep_prob,
-                        l2_reg_lambda = self.l2_reg_lambda) 
+                        l2_reg_lambda = self.l2_reg_lambda,
+                        trans_w = self.trans_w,
+                        trans_b = self.trans_b,
+                        sour_dic = self.sour_dic,
+                        tar_dic = self.tar_dic,
+                        wei_dic = self.wei_dic)
+
                 else:
                     pass
 
@@ -374,7 +382,7 @@ class train_nn():
         for i in range(self.num_epochs):
             batches = []
             if self.part >= 1:
-                part_epochs = self.part
+                part_epochs = 4#self.part
             else:
                 part_epochs = 1
             for j in range(part_epochs):

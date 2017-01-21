@@ -17,7 +17,7 @@ class train_transw(object):
             weight_kind = "1",
             embedding_size = 128,
             trainable = True, 
-            max_iter = 20000):
+            max_iter = 50000):
 
         self.target_dic_path = target_dic_path
         self.source_dic_path = source_dic_path
