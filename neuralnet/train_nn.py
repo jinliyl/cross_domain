@@ -28,7 +28,7 @@ class train_nn():
                 dropout_keep_prob = 0.5,
                 l2_reg_lambda = 0.00, 
                 batch_size = 64, 
-                num_epochs = 300, 
+                num_epochs = 500, 
                 evaluate_every = 10, 
                 checkpoint_every = 100,
                 random_train = False,
@@ -61,7 +61,7 @@ class train_nn():
         self.evaluate_every = evaluate_every
         self.checkpoint_every = checkpoint_every
 
-        self.pre_step = 200
+        self.pre_step = 100
         self._seed = 10
         self.random_train = random_train
         self.op_step = op_step
@@ -83,7 +83,7 @@ class train_nn():
                 word_vec_source = self.word_vec_source,
                 tf_df_target = self.tf_df_target,
                 tf_df_source = self.tf_df_source,
-                weight_kind = "1",
+                weight_kind = "df",
                 embedding_size = 128,
                 trainable = False,
                 max_iter = 6000)
@@ -224,7 +224,7 @@ class train_nn():
         self.all_batches = []
         for i in range(self.num_epochs):
             if self.part >= 1:
-                part_epochs = 4#self.part
+                part_epochs = self.part
             else:
                 part_epochs = 1
             batches = []
@@ -320,8 +320,8 @@ class train_nn():
                         cross_model.input_y: y_batch,
                         cross_model.dropout_keep_prob: self.dropout_keep_prob,
                         cross_model.cn_weight: 1,
-                        cross_model.en_weight: 0.5,
-                        cross_model.trans_weight: 1e-4,
+                        cross_model.en_weight: 1,
+                        cross_model.trans_weight: 1e-3,
                         cross_model.learning_rate: rate
                     }
                     _, step, loss, kl, accuracy = sess.run(

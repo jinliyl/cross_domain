@@ -14,7 +14,7 @@ class train_transw(object):
             word_vec_source, 
             tf_df_target,
             tf_df_source,
-            weight_kind = "df",
+            weight_kind = "1",
             embedding_size = 128,
             trainable = True, 
             max_iter = 50000):

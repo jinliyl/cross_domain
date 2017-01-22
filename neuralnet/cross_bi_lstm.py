@@ -45,9 +45,9 @@ class cross_bi_lstm(object):
 
         #embedding layer
         with tf.device('/cpu:0'), tf.name_scope("embedding"), tf.variable_scope("CNN") as scope:
-            #self.embedded_W = tf.Variable(
+            self.embedded_W = tf.Variable(
             #    tf.random_uniform([vocab_size, embedding_size], dtype=tf.float32, minval=-1.0, maxval=1.0),
-            self.embedded_W = tf.constant(
+            #self.embedded_W = tf.constant(
                 target_vec_dic,
                 name="W")
             self.embedded_chars = tf.nn.embedding_lookup(self.embedded_W, self.input_x)

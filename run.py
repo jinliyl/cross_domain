@@ -110,7 +110,7 @@ if __name__ == "__main__":
     index_content()
     '''
     res = []
-    para = ["True", 64, "bi_lstm", "QQ"]
+    para = ["True", 32, "bi_lstm", "QQ"]
     time_str = datetime.now().isoformat()
     f = open("./result/" + time_str, "w")
     for i in range(10):
@@ -121,7 +121,56 @@ if __name__ == "__main__":
         print("")
         f.flush()
     print(res, file=f)
-    print(para, file=f) 
+    print(para, file=f)
     f.close()
+
+
+    res = []
+    para = ["True", 16, "bi_lstm", "QQ"]
+    time_str = datetime.now().isoformat()
+    f = open("./result/" + time_str, "w")
+    for i in range(10):
+        print(str(i) + " times training...")
+        accu = train_test(para[0], para[1], para[2], para[3])
+        res.append(accu)
+        print(accu, file = f)
+        print("")
+        f.flush()
+    print(res, file=f)
+    print(para, file=f)
+    f.close()
+
+
+    res = []
+    para = ["True", 8, "bi_lstm", "QQ"]
+    time_str = datetime.now().isoformat()
+    f = open("./result/" + time_str, "w")
+    for i in range(10):
+        print(str(i) + " times training...")
+        accu = train_test(para[0], para[1], para[2], para[3])
+        res.append(accu)
+        print(accu, file = f)
+        print("")
+        f.flush()
+    print(res, file=f)
+    print(para, file=f)
+    f.close()
+
+
+    res = []
+    para = ["True", 4, "bi_lstm", "QQ"]
+    time_str = datetime.now().isoformat()
+    f = open("./result/" + time_str, "w")
+    for i in range(10):
+        print(str(i) + " times training...")
+        accu = train_test(para[0], para[1], para[2], para[3])
+        res.append(accu)
+        print(accu, file = f)
+        print("")
+        f.flush()
+    print(res, file=f)
+    print(para, file=f)
+    f.close()
+
     #'''
 
