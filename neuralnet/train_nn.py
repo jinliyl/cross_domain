@@ -37,7 +37,7 @@ class train_nn():
                 word_vec_source = "",
                 tf_df_target = "", 
                 tf_df_source = "",
-                max_iter = 300):
+                max_iter = 500):
         
         self.emotion_list = emotion_list
         self.target_dic_path = target_dic_path

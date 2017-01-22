@@ -78,7 +78,7 @@ def train_test(cross, part, model, name):
             num_filters = 128,
             sequence_length = 150,
             embedding_dim = 128,
-            op_step = 1e-4,
+            op_step = 1e-3,
             word_vec_target = "pre_data/QQ_vectors", 
             word_vec_source = "pre_data/Sina_vectors",
             tf_df_target = "pre_data/QQ_tf_df",
