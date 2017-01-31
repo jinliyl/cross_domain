@@ -62,7 +62,7 @@ def index_content():
 
 
 
-def train_test(cross, part, model, name):
+def train_test(cross, part, model, name, op_step):
     if cross:
         cross_train = train_nn(
             #emotion_list = ["happy", "touched", "sympathetic", "angry", "amused", "sad", "surprised", "anxious"],
@@ -78,7 +78,7 @@ def train_test(cross, part, model, name):
             num_filters = 128,
             sequence_length = 150,
             embedding_dim = 128,
-            op_step = 1e-3,
+            op_step = op_step,
             word_vec_target = "pre_data/QQ_vectors", 
             word_vec_source = "pre_data/Sina_vectors",
             tf_df_target = "pre_data/QQ_tf_df",
@@ -98,7 +98,7 @@ def train_test(cross, part, model, name):
             batch_size = 32,
             num_filters = 128,
             sequence_length = 150,
-            op_step = 1e-4, 
+            op_step = op_step, 
             word_vec_target = "pre_data/QQ_vectors")
         return single_train.run()
 
@@ -109,85 +109,19 @@ if __name__ == "__main__":
     statistics()
     index_content()
     '''
-    res = []
-    para = ["True", 64, "cnn", "QQ"]
-    time_str = datetime.now().isoformat()
-    f = open("./result/" + time_str, "w")
-    for i in range(10):
-        print(str(i) + " times training...")
-        accu = train_test(para[0], para[1], para[2], para[3])
-        res.append(accu)
-        print(accu, file = f)
-        print("")
-        f.flush()
-    print(res, file=f)
-    print(para, file=f)
-    f.close()
-
-
-
-    res = []
-    para = ["True", 32, "cnn", "QQ"]
-    time_str = datetime.now().isoformat()
-    f = open("./result/" + time_str, "w")
-    for i in range(10):
-        print(str(i) + " times training...")
-        accu = train_test(para[0], para[1], para[2], para[3])
-        res.append(accu)
-        print(accu, file = f)
-        print("")
-        f.flush()
-    print(res, file=f)
-    print(para, file=f)
-    f.close()
-
-
-    res = []
-    para = ["True", 16, "cnn", "QQ"]
-    time_str = datetime.now().isoformat()
-    f = open("./result/" + time_str, "w")
-    for i in range(10):
-        print(str(i) + " times training...")
-        accu = train_test(para[0], para[1], para[2], para[3])
-        res.append(accu)
-        print(accu, file = f)
-        print("")
-        f.flush()
-    print(res, file=f)
-    print(para, file=f)
-    f.close()
-
-
-    res = []
-    para = ["True", 8, "cnn", "QQ"]
-    time_str = datetime.now().isoformat()
-    f = open("./result/" + time_str, "w")
-    for i in range(10):
-        print(str(i) + " times training...")
-        accu = train_test(para[0], para[1], para[2], para[3])
-        res.append(accu)
-        print(accu, file = f)
-        print("")
-        f.flush()
-    print(res, file=f)
-    print(para, file=f)
-    f.close()
-
-
-    res = []
-    para = ["True", 4, "cnn", "QQ"]
-    time_str = datetime.now().isoformat()
-    f = open("./result/" + time_str, "w")
-    for i in range(10):
-        print(str(i) + " times training...")
-        accu = train_test(para[0], para[1], para[2], para[3])
-        res.append(accu)
-        print(accu, file = f)
-        print("")
-        f.flush()
-    print(res, file=f)
-    print(para, file=f)
-    f.close()
-
-    #'''
+    for x in [4, 8, 16, 32, 64]:
+        res = []
+        para = [True, x, "bi_lstm", "QQ", 1e-4]
+        time_str = datetime.now().isoformat()
+        f = open("./result/" + time_str, "w")
+        for i in range(10):
+            print(str(i) + " times training...")
+            accu = train_test(para[0], para[1], para[2], para[3], para[4])
+            res.append(accu)
+            print(accu, file = f)
+            print("")
+            f.flush()
+        print(res, file=f)
+        print(para, file=f)
+        f.close()
 

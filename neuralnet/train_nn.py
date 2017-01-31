@@ -37,7 +37,7 @@ class train_nn():
                 word_vec_source = "",
                 tf_df_target = "", 
                 tf_df_source = "",
-                max_iter = 500):
+                max_iter = 320):
         
         self.emotion_list = emotion_list
         self.target_dic_path = target_dic_path
@@ -83,7 +83,7 @@ class train_nn():
                 word_vec_source = self.word_vec_source,
                 tf_df_target = self.tf_df_target,
                 tf_df_source = self.tf_df_source,
-                weight_kind = "df",
+                weight_kind = "1",
                 embedding_size = 128,
                 trainable = False,
                 max_iter = 6000)
@@ -462,6 +462,9 @@ class train_nn():
 
                     # test
                     current_step = tf.train.global_step(sess, global_step)
+                    if current_step > self.max_iter:
+                        break
+
                     if current_step % self.evaluate_every == 0:
                         target_test_feature_pad, target_test_feature_seq_len = self.gene_pad_seq(self.target_test_feature)
                         feed_dict = {

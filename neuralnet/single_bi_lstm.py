@@ -23,7 +23,9 @@ class single_bi_lstm(object):
 
         #embedding layer
         with tf.device('/cpu:0'), tf.name_scope("embedding"), tf.variable_scope("CNN") as scope:
-            self.embedded_W = tf.Variable(
+            self.embedded_W = tf.constant(
+            #self.embedded_W = tf.Variable(
+                #tf.truncated_normal([vocab_size, embedding_size], stddev=0.1),
                 target_vec_dic,
                 name="W")
             self.embedded_chars = tf.nn.embedding_lookup(self.embedded_W, self.input_x)
