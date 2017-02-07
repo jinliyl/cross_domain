@@ -37,7 +37,8 @@ class train_nn():
                 word_vec_source = "",
                 tf_df_target = "", 
                 tf_df_source = "",
-                max_iter = 320):
+                max_iter = 320,
+                vec_type = "static"):
         
         self.emotion_list = emotion_list
         self.target_dic_path = target_dic_path
@@ -70,7 +71,7 @@ class train_nn():
         self.tf_df_target = tf_df_target
         self.tf_df_source = tf_df_source
         self.max_iter = max_iter
-
+        self.vec_type = vec_type
 
     def run(self):
         print("emotions: " + str(self.emotion_list))
@@ -83,7 +84,7 @@ class train_nn():
                 word_vec_source = self.word_vec_source,
                 tf_df_target = self.tf_df_target,
                 tf_df_source = self.tf_df_source,
-                weight_kind = "1",
+                weight_kind = "df",
                 embedding_size = 128,
                 trainable = False,
                 max_iter = 6000)
@@ -282,7 +283,8 @@ class train_nn():
                         trans_b = self.trans_b,
                         sour_dic = self.sour_dic,
                         tar_dic = self.tar_dic,
-                        wei_dic = self.wei_dic)
+                        wei_dic = self.wei_dic,
+                        vec_type = self.vec_type)
 
                 else:
                     pass

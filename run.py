@@ -62,7 +62,7 @@ def index_content():
 
 
 
-def train_test(cross, part, model, name, op_step):
+def train_test(cross, part, model, name, op_step, vec_type = "static"):
     if cross:
         cross_train = train_nn(
             #emotion_list = ["happy", "touched", "sympathetic", "angry", "amused", "sad", "surprised", "anxious"],
@@ -82,7 +82,8 @@ def train_test(cross, part, model, name, op_step):
             word_vec_target = "pre_data/QQ_vectors", 
             word_vec_source = "pre_data/Sina_vectors",
             tf_df_target = "pre_data/QQ_tf_df",
-            tf_df_source = "pre_data/Sina_tf_df",)
+            tf_df_source = "pre_data/Sina_tf_df",
+            vec_type = vec_type)
         return cross_train.run()
     else:
         single_train = train_nn(
@@ -111,12 +112,44 @@ if __name__ == "__main__":
     '''
     for x in [4, 8, 16, 32, 64]:
         res = []
-        para = [True, x, "bi_lstm", "QQ", 1e-4]
+        para = [True, x, "bi_lstm", "QQ", 1e-4, "rand"]
         time_str = datetime.now().isoformat()
         f = open("./result/" + time_str, "w")
         for i in range(10):
             print(str(i) + " times training...")
-            accu = train_test(para[0], para[1], para[2], para[3], para[4])
+            accu = train_test(para[0], para[1], para[2], para[3], para[4], para[5])
+            res.append(accu)
+            print(accu, file = f)
+            print("")
+            f.flush()
+        print(res, file=f)
+        print(para, file=f)
+        f.close()
+    
+    for x in [4, 8, 16, 32, 64]:
+        res = []
+        para = [True, x, "bi_lstm", "QQ", 1e-4, "static"]
+        time_str = datetime.now().isoformat()
+        f = open("./result/" + time_str, "w")
+        for i in range(10):
+            print(str(i) + " times training...")
+            accu = train_test(para[0], para[1], para[2], para[3], para[4], para[5])
+            res.append(accu)
+            print(accu, file = f)
+            print("")
+            f.flush()
+        print(res, file=f)
+        print(para, file=f)
+        f.close()
+
+    for x in [4, 8, 16, 32, 64]:
+        res = []
+        para = [True, x, "bi_lstm", "QQ", 1e-4, "none_static"]
+        time_str = datetime.now().isoformat()
+        f = open("./result/" + time_str, "w")
+        for i in range(10):
+            print(str(i) + " times training...")
+            accu = train_test(para[0], para[1], para[2], para[3], para[4], para[5])
             res.append(accu)
             print(accu, file = f)
             print("")

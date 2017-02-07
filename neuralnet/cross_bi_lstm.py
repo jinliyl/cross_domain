@@ -20,7 +20,8 @@ class cross_bi_lstm(object):
         wei_dic,
         l2_reg_lambda = 0.0, 
         label_smoothing = 0.0, 
-        highway_flag = False):
+        highway_flag = False,
+        vec_type = "static"):
 
         # Placeholders for input, output and dropout
         self.seq_len = tf.placeholder(tf.int32, [None], name = "seq_len")
@@ -45,11 +46,15 @@ class cross_bi_lstm(object):
 
         #embedding layer
         with tf.device('/cpu:0'), tf.name_scope("embedding"), tf.variable_scope("CNN") as scope:
-            self.embedded_W = tf.Variable(
-            #    tf.random_uniform([vocab_size, embedding_size], dtype=tf.float32, minval=-1.0, maxval=1.0),
-            #self.embedded_W = tf.constant(
-                target_vec_dic,
-                name="W")
+            if vec_type == "none_static":
+                print("None static")
+                self.embedded_W = tf.Variable(target_vec_dic, name="W")
+            elif vec_type == "static":
+                print("static")
+                self.embedded_W = tf.constant(target_vec_dic, name="W")
+            else:
+                print("rand")
+                self.embedded_W = tf.Variable(tf.truncated_normal([vocab_size, embedding_size], stddev=0.1), name="W")
             self.embedded_chars = tf.nn.embedding_lookup(self.embedded_W, self.input_x)
             #self.weight_W = tf.Variable(
             self.weight_W = tf.constant(
